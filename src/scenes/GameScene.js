@@ -33,6 +33,8 @@ class GameScene extends Phaser.Scene {
     const { cameras, entities } = this.state
 
     entities.buildings.y = entities.atlas.y - 48
+
+    entities.atlas.update()
   }
 }
 
