@@ -11,6 +11,7 @@ export default class RTSGround extends Phaser.GameObjects.Sprite {
     }
 
     this.state.hoverPointer.alpha = 0
+    this.state.building.alpha = 0.5
 
     this.state.container.add(this)
     this.state.container.add(this.state.building)

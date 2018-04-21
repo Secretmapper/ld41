@@ -8,15 +8,28 @@ class GUI {
     this.scene = scene
     this.container = scene.add.container(0, 0)
 
-    this.resource = this.scene.add.sprite(0, 0, 'entities', 'resources1.png')
-    this.resource.depth = 20000
-    this.resource.setOrigin(0, 0)
+    const food = this.addResource(0, 0, 'resources4.png')
+    const people = this.addResource(0, 35, 'resources5.png')
+    const wood = this.addResource(0, 70, 'resources1.png')
+    const stone = this.addResource(0, 105, 'resources2.png')
+    const prayer = this.addResource(0, 140, 'resources3.png')
+  }
+
+  addResource (x, y, key) {
+    const icon = this.scene.add.sprite(x, y, 'entities', key)
+    icon.depth = 20000
+    icon.setOrigin(0, 0)
 
     const style = { font: '8px press_start', fill: '#ffffff', stroke: 'black', strokeThickness: 1, align: 'center' }
-    this.text = this.scene.add.text(this.resource.width, this.resource.height / 4, '100', style)
+    const text = this.scene.add.text(x + icon.width + 10, y + icon.height / 2, '0', style)
 
-    this.container.add(this.resource)
-    this.container.add(this.text)
+    this.container.add(icon)
+    this.container.add(text)
+
+    return {
+      icon,
+      text
+    }
   }
 
   update () {
@@ -56,7 +69,7 @@ class GameScene extends Phaser.Scene {
     cameras.rtsGui.ignore(entities.atlas)
 
     cameras.rts.setZoom(2)
-    cameras.main.startFollow(entities.atlas)
+    // cameras.main.startFollow(entities.atlas)
 
     this.input.setPollAlways()
     this.input.on('pointermove', this.onPointerMove, this)
@@ -81,7 +94,11 @@ class GameScene extends Phaser.Scene {
     const { entities } = this.state
 
     if (pointer.y > 280) {
-      entities.ground.state.building.x = (Phaser.Math.Clamp(pointer.x, 200, 600) - 400) / 2
+      const ROUND_VALUE = 25
+
+      const coord = (Phaser.Math.Clamp(pointer.x, 200, 600)) / 2
+      const round = Math.round(coord / ROUND_VALUE) * ROUND_VALUE
+      entities.ground.state.building.x = round - 200
     }
   }
 }

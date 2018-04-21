@@ -1,4 +1,4 @@
-const VEL = 100
+const VEL = 200
 
 export default class Atlas extends Phaser.GameObjects.Sprite {
   constructor () {
