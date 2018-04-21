@@ -1,0 +1,70 @@
+Arguments: 
+  /Users/secretmapper/.nvm/versions/node/v9.5.0/bin/node /usr/local/bin/yarn run start
+
+PATH: 
+  /Users/Secretmapper/.rbenv/shims:/Users/Secretmapper/.rbenv/bin:/Users/Secretmapper/Desktop/ImageMagick-6.9.0/bin:/usr/local/bin/bin-override:/usr/local/heroku/bin:/Users/secretmapper/.node/bin:/Users/secretmapper/.nvm/versions/node/v9.5.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:~/.composer/vendor/bin
+
+Yarn version: 
+  0.27.5
+
+Node version: 
+  9.5.0
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "bomber",
+    "version": "0.3.0",
+    "main": "src/index.js",
+    "scripts": {
+      "start": "webpack",
+      "build": "webpack --config config/webpack.production.config.js"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.0.0-beta.42",
+      "@babel/polyfill": "^7.0.0-beta.42",
+      "@babel/preset-env": "^7.0.0-beta.42",
+      "@babel/preset-es2017": "^7.0.0-beta.42",
+      "@babel/preset-stage-3": "^7.0.0-beta.42",
+      "@babel/preset-typescript": "^7.0.0-beta.42",
+      "awesome-typescript-loader": "^3.4.1",
+      "babel-loader": "8.0.0-beta.2",
+      "browser-sync": "^2.18.13",
+      "browser-sync-webpack-plugin": "^1.2.0",
+      "html-webpack-plugin": "^2.30.1",
+      "raw-loader": "^0.5.1",
+      "typescript": "^2.7.2",
+      "webpack": "3.11.0"
+    },
+    "dependencies": {
+      "phaser": "3.3.0"
+    }
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/Secretmapper/bomber.git"
+    },
+    "author": "Arian Allenson Valdez <arianallensonv@gmail.com> (http://arianv.com/)",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/Secretmapper/bomber/issues"
+    },
+    "homepage": "https://github.com/Secretmapper/bomber#readme",
+    "description": ""
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  SyntaxError: /Users/secretmapper/Documents/projects/experiments/bomber/package.json: Unexpected string in JSON at position 796
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/0.27.5/libexec/lib/yarn-cli.js:747:57
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/0.27.5/libexec/lib/yarn-cli.js:91:30)
+      at /usr/local/Cellar/yarn/0.27.5/libexec/lib/yarn-cli.js:102:13
+      at <anonymous>

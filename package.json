@@ -1,0 +1,46 @@
+{
+  "name": "bomber",
+  "version": "0.3.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "webpack",
+    "export:ase": "node scripts/ase.js",
+    "pack:entities": "TexturePacker --format phaser --data assets/textures/entities.json --sheet assets/textures/entities.png src/assets/images/entities",
+    "pack:tiles": "cp ./src/assets/images/tiles/tiles.png ./assets/textures/tiles.png",
+    "pack": "npm run export:ase && npm run pack:entities && npm run pack:tiles",
+    "build": "webpack --config webpack.production.config.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.42",
+    "@babel/polyfill": "^7.0.0-beta.42",
+    "@babel/preset-env": "^7.0.0-beta.42",
+    "@babel/preset-es2017": "^7.0.0-beta.42",
+    "@babel/preset-stage-3": "^7.0.0-beta.42",
+    "@babel/preset-typescript": "^7.0.0-beta.42",
+    "awesome-typescript-loader": "^3.4.1",
+    "babel-loader": "8.0.0-beta.2",
+    "browser-sync": "^2.18.13",
+    "browser-sync-webpack-plugin": "^1.2.0",
+    "html-webpack-plugin": "^2.30.1",
+    "raw-loader": "^0.5.1",
+    "typescript": "^2.7.2",
+    "webpack": "3.11.0"
+  },
+  "dependencies": {
+    "@babel/preset-es2015": "^7.0.0-beta.44",
+    "lodash": "^4.17.5",
+    "phaser": "3.4.0",
+    "webfontloader": "^1.6.28"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Secretmapper/bomber.git"
+  },
+  "author": "Arian Allenson Valdez <arianallensonv@gmail.com> (http://arianv.com/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Secretmapper/bomber/issues"
+  },
+  "homepage": "https://github.com/Secretmapper/bomber#readme",
+  "description": ""
+}

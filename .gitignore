@@ -1,0 +1,4 @@
+node_modules/
+build/
+src/assets/images/entities/*.png
+.DS_Store
