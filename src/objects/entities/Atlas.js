@@ -9,10 +9,10 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
 
     const KeyCodes = Phaser.Input.Keyboard.KeyCodes
     this.controls = this.scene.input.keyboard.addKeys({
-      up: KeyCodes.UP,
-      down: KeyCodes.DOWN,
-      left: KeyCodes.LEFT,
-      right: KeyCodes.RIGHT
+      up: KeyCodes.W,
+      down: KeyCodes.S,
+      left: KeyCodes.A,
+      right: KeyCodes.D
     })
   }
 
