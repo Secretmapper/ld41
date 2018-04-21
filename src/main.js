@@ -6,9 +6,8 @@ import GameScene from './scenes/GameScene'
 const config = {
     type: Phaser.AUTO,
     parent: 'content',
-    width: 400,
-    height: 240,
-    resolution: 2,
+    width: 800,
+    height: 480,
     backgroundColor: '#3B96E2',
     pixelArt: true,
     physics: {

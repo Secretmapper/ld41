@@ -4,28 +4,43 @@ export default class RTSGround extends Phaser.GameObjects.Sprite {
     this.scene.physics.world.enable(this)
 
     this.state = {
-      container: this.scene.add.container(0, 0),
-      building: this.scene.add.sprite(0, 0, 'entities', 'structures1.png'),
-      person: this.scene.add.sprite(0, 0, 'entities', 'person1.png')
+      building: this.addSprite(0, 0, 'entities', 'structures2.png'),
+      person: this.addSprite(0, 0, 'entities', 'person1.png'),
+      hoverPointer: this.addSprite(0, 0, 'entities', 'structures1.png')
     }
+    this.children = [
+      this.state.building,
+      this.state.person,
+      this.state.hoverPointer
+    ]
 
-    // this.state.container.add(this.state.building)
-    // this.state.container.x = this.x 
-    // this.state.container.y = this.y
+    this.state.building.setInteractive()
+    this.state.building.depth = this.depth + 0.001
+    this.state.person.depth = this.depth + 0.001
+
+    this.state.person.anims.play('person/walk')
+  }
+
+  addSprite (x, y, key, frame) {
+    return this.scene.add.sprite(x, y, key, frame).setOrigin(0.5, 1)
+  }
+
+  onMouseOver (pointer, obj) {
+    console.log(pointer, obj)
   }
 
   update () {
     super.update(...arguments)
     const { cameras, entities } = this.scene.state
 
-    this.y = entities.atlas.y - 48
+    this.y = entities.atlas.y - 96
 
     this.state.building.x = this.x
-    this.state.building.y = this.y
+    this.state.building.y = this.y + 20
     this.state.building.depth = this.depth + 0.001
 
     this.state.person.x = this.x
-    this.state.person.y = this.y + 10
+    this.state.person.y = this.y + 26
     this.state.person.depth = this.depth + 0.001
   }
 }

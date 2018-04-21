@@ -21,4 +21,12 @@ export default function makeAnimations (scene) {
       ['walk', 5, 7, { frameRate: 12, repeat: -1 }],
     ]
   )
+
+  createAnims(
+    'person',
+    [
+      ['idle', 1, 1, { frameRate: 12, repeat: -1 }],
+      ['walk', 1, 2, { frameRate: 6, repeat: -1 }],
+    ]
+  )
 }
