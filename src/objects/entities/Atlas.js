@@ -32,6 +32,6 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
       this.anims.play('atlas/idle', true)
     }
 
-    this.scene.state.entities.buildings.x = this.x
+    this.scene.state.entities.ground.x = this.x
   }
 }
