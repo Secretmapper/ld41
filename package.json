@@ -5,7 +5,7 @@
   "scripts": {
     "start": "webpack",
     "export:ase": "node scripts/ase.js",
-    "pack:entities": "TexturePacker --format phaser --data assets/textures/entities.json --sheet assets/textures/entities.png src/assets/images/entities",
+    "pack:entities": "TexturePacker --format phaser-json-hash --extrude 0 --algorithm Basic --trim-mode None --png-opt-level 0 --disable-auto-alias --data assets/textures/entities.json --sheet assets/textures/entities.png src/assets/images/entities",
     "pack:tiles": "cp ./src/assets/images/tiles/tiles.png ./assets/textures/tiles.png",
     "pack": "npm run export:ase && npm run pack:entities && npm run pack:tiles",
     "build": "webpack --config webpack.production.config.js"
