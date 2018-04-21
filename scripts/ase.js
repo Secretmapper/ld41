@@ -15,7 +15,7 @@ fs.readdir(dirname, function(err, filenames) {
   }
   filenames.forEach(function(filename) {
     if (path.extname(filename).toLowerCase() === '.ase') {
-      exec(`/Applications/Aseprite.app/Contents/MacOS/aseprite -b ${dirname + filename} --save-as ${dirname + filename.slice(0, -4)}.png`)
+      exec(`/Applications/Aseprite.app/Contents/MacOS/aseprite -b ${dirname + filename} --scale 2 --save-as ${dirname + filename.slice(0, -4)}.png`)
     }
   })
 })
