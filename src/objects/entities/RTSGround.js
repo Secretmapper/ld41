@@ -15,7 +15,7 @@ class RTSGround extends Phaser.GameObjects.Sprite {
         null,
         null,
 
-        new ResourceMaker(this.scene, 0, 20),
+        new ResourceMaker(this.scene, 0, 20, 'entities', 'structures11.png'),
         null,
         null,
         null,
@@ -26,6 +26,7 @@ class RTSGround extends Phaser.GameObjects.Sprite {
 
     this.state.hoverPointer.alpha = 0
     this.state.building.alpha = 0.5
+    this.state.building.visible = false
 
     this.state.container.add(this)
     this.state.container.add(this.state.buildings[4])
@@ -56,7 +57,7 @@ class RTSGround extends Phaser.GameObjects.Sprite {
     const textureFrame = this.scene.state.entities.atlas.anims.currentFrame.textureFrame
 
     this.x = 0
-    this.y = textureFrame === 'atlas3.png' ? 1 : 0
+    this.y = textureFrame === 'atlas3.png' || textureFrame === 'atlas7.png' ? 1 : 0
 
     this.state.container.x = entities.atlas.x
     this.state.container.y = entities.atlas.y - 96 + this.y

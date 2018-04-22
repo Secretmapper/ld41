@@ -29,4 +29,11 @@ export default function makeAnimations (scene) {
       ['walk', 1, 2, { frameRate: 6, repeat: -1 }],
     ]
   )
+
+  createAnims(
+    'ghost',
+    [
+      ['idle', 1, 4, { frameRate: 12, repeat: -1 }],
+    ]
+  )
 }

@@ -43,12 +43,10 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
   }
 
   jump () {
-    if (!this.body.blocked.down && !this.jumping) {
-      return;
-    }
-
-    if (this.body.velocity.y < 0 || this.body.blocked.down) {
-      this.body.setVelocityY(-200)
+    if (this.body.blocked.down || this.body.touching.down) {
+      if (this.body.velocity.y < 0 || this.body.blocked.down || this.body.touching.down) {
+        this.body.setVelocityY(-250)
+      }
     }
   }
 }
