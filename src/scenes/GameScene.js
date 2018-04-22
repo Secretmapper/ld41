@@ -10,6 +10,59 @@ import fp from 'lodash/fp'
 const style = { font: '12px press_start', fill: '#ffffff', stroke: 'black', strokeThickness: 6, align: 'center' }
 const rightStyle = { font: '12px press_start', fill: '#ffffff', stroke: 'black', strokeThickness: 6, align: 'left' }
 
+const frameData = {
+  'structures2.png': {
+    detail: ['House', 'produces gold'],
+    cost: { gold: 30, food: 40 }
+  },
+  'structures3.png': {
+    detail: ['Woodcutter', 'produces wood'],
+    cost: { gold: 30, food: 40 }
+  },
+  'structures4.png': {
+    detail: ['Watchtower', 'shoots arrows'],
+    cost: { gold: 30, food: 40 }
+  },
+  'structures5.png': {
+    detail: ['Mage', 'shoots magic fireballs'],
+    cost: { gold: 30, food: 40 }
+  },
+  'structures6.png': {
+    detail: ['Temple', 'produces faith'],
+    cost: { gold: 30, food: 40 }
+  },
+  'structures7.png': {
+    detail: ['Windmill', 'increases Atlas\' speed'],
+    cost: { gold: 30, food: 40 }
+  },
+  'structures8.png': {
+    detail: ['Farm', 'provides food'],
+    cost: { gold: 30, food: 40 }
+  },
+  'structures9.png': {
+    detail: ['Goldmine', 'produces lots of gold'],
+    cost: { gold: 30, food: 40 }
+  },
+  'structures10.png': {
+    detail: ['Catapult', 'shoots Boulders'],
+    cost: { gold: 30, food: 40 }
+  },
+  'structures11.png': {
+    detail: ['townhall'],
+    cost: { gold: 30, food: 40 }
+  },
+  'structures12.png': {
+    detail: ['Buildings']
+  },
+  'structures13.png': {
+    detail: ['Actions']
+  },
+  'structures14.png': {
+    detail: ['Create Steppable Wood Platform'],
+    cost: { gold: 30, food: 40 }
+  }
+}
+
 class GUI {
   constructor (scene) {
     this.scene = scene
@@ -24,7 +77,11 @@ class GUI {
 
     this.instructionText = this.scene.add.text(0, 0, ['House', 'provides gold'], rightStyle)
     this.instructionText.alpha = 0
-    this.instructionText.setOrigin(1, 0)
+    this.instructionText.setOrigin(1, 0.5)
+
+    this.costText = this.scene.add.text(0, 0, ['Costs:'], rightStyle)
+    this.costText.alpha = 0
+    this.costText.setOrigin(1, 1)
 
     const gold = this.addResource(10, 0, 'resources6.png')
     const food = this.addResource(10, 35, 'resources4.png')
@@ -155,10 +212,10 @@ class GameScene extends Phaser.Scene {
     makeAnimations(this)
 
     this.data.set('resources', {
-      gold: 300,
-      food: 20,
-      wood: 40,
-      stone: 30,
+      gold: 0,
+      food: 0,
+      wood: 0,
+      stone: 0,
       prayer: 0
     })
 
@@ -199,8 +256,10 @@ class GameScene extends Phaser.Scene {
 
     cameras.main.ignore(gui.container)
     cameras.main.ignore(gui.instructionText)
+    cameras.main.ignore(gui.costText)
     cameras.rts.ignore(gui.container)
     cameras.rts.ignore(gui.instructionText)
+    cameras.rts.ignore(gui.costText)
     cameras.rtsGui.ignore(ghost)
     cameras.rtsGui.ignore(entities.ground)
     cameras.rtsGui.ignore(entities.ground.state.container)
@@ -233,47 +292,17 @@ class GameScene extends Phaser.Scene {
     this.input.on('gameobjectover', function (pointer, obj) {
       obj.setTint(0x00ff00)
 
-      switch (obj.frame.name) {
-        case 'structures2.png':
-          gui.instructionText.setText(['House', 'produces gold'])
-          break
-        case 'structures3.png':
-          gui.instructionText.setText(['Woodcutter', 'produces wood'])
-          break
-        case 'structures4.png':
-          gui.instructionText.setText(['Watchtower', 'shoots arrows'])
-          break
-        case 'structures5.png':
-          gui.instructionText.setText(['Mage', 'shoots magic fireballs'])
-          break
-        case 'structures6.png':
-          gui.instructionText.setText(['Temple', 'produces faith'])
-          break
-        case 'structures7.png':
-          gui.instructionText.setText(['Windmill', 'increases Atlas\' speed'])
-          break
-        case 'structures8.png':
-          gui.instructionText.setText(['Farm', 'provides food'])
-          break
-        case 'structures9.png':
-          gui.instructionText.setText(['Goldmine', 'produces lots of gold'])
-          break
-        case 'structures10.png':
-          gui.instructionText.setText(['Catapult', 'shoots Boulders'])
-          break
-        case 'structures11.png':
-          gui.instructionText.setText('townhall')
-          break
-        case 'structures12.png':
-          gui.instructionText.setText(['Buildings'])
-          break
-        case 'structures13.png':
-          gui.instructionText.setText(['Actions'])
-          break
-        case 'structures14.png':
-          gui.instructionText.setText(['Create Steppable Wood Platform'])
-          break
+      if (obj.frame.name in frameData) {
+        gui.instructionText.setText([
+          ...frameData[obj.frame.name].detail,
+          ...ld.map(frameData[obj.frame.name].cost, (value, key) => (
+            key + ': ' + String(value)
+          ))
+        ])
+      } else {
+        gui.instructionText.setText([':)'])
       }
+
       gui.instructionText.x = obj.x
       gui.instructionText.y = obj.y
       gui.instructionText.alpha = 1
@@ -313,11 +342,43 @@ class GameScene extends Phaser.Scene {
     )
   }
 
-  onPointerMove (pointer) {
+  canBuyBuilding () {
     const { entities } = this.state
+    const resources = this.data.get('resources')
+    const data = frameData[entities.ground.state.building.frame.name]
+    let canBuy = true
+
+    ld.each(data.cost, (value, key) => {
+      if (resources[key] < value) {
+        canBuy = false
+      }
+    })
+
+    return canBuy
+  }
+
+  onPointerMove (pointer) {
+    const { gui, entities } = this.state
     const building = entities.ground.state.building
 
     building.visible = (pointer.y < 200 && pointer.x > 160 && pointer.x < 640)
+
+    gui.costText.alpha = building.visible ? 1 : 0
+    gui.costText.x = pointer.x
+    gui.costText.y = pointer.y
+    gui.costText.setText(
+      ld.map(frameData[building.frame.name].cost, (value, key) => (
+        key + ': ' + String(value)
+      ))
+    )
+    if (!building.visible) return
+
+    const canBuy = this.canBuyBuilding()
+    if (canBuy) {
+      building.clearTint()
+    } else {
+      building.setTint(0xff0000)
+    }
 
     if (pointer.y < 200) {
       const ROUND_VALUE = 25
@@ -332,6 +393,9 @@ class GameScene extends Phaser.Scene {
   onPointerUp (pointer) {
     const { entities } = this.state
 
+    const canBuy = this.canBuyBuilding()
+    if (!canBuy) return;
+
     if (
       pointer.y < 200 && (pointer.x > 160 && pointer.x < 640)
     ) {
@@ -341,6 +405,11 @@ class GameScene extends Phaser.Scene {
       const coord = (Phaser.Math.Clamp(pointer.x, 200, 600)) / 2
       const round = Math.round(coord / ROUND_VALUE) * ROUND_VALUE
 
+      const data = frameData[entities.ground.state.building.frame.name]
+        const resources = this.data.get('resources')
+      ld.each(data.cost, (value, key) => {
+        resources[key] -= value
+      })
       entities.ground.spawnBuilding(round)
     }
   }
