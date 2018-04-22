@@ -21,7 +21,7 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
   update () {
     super.update(...arguments)
 
-    this.body.setVelocityX(0)
+    this.body.setVelocityX(this.body.velocity.x * 0.95)
     if (this.controls.left.isDown) {
       this.body.setVelocityX(-VEL)
       this.flipX = true
