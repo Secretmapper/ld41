@@ -288,17 +288,12 @@ class GameScene extends Phaser.Scene {
     cameras.main.setSize(800, 280)
     cameras.main.setPosition(0, 200)
 
-    const ghost = this.add.sprite(200, 200, 'entities', 'ghost1.png')
-    ghost.anims.play('ghost/idle')
-    ghost.flipX = true
-
     cameras.main.ignore(gui.container)
     cameras.main.ignore(gui.instructionText)
     cameras.main.ignore(gui.costText)
     cameras.rts.ignore(gui.container)
     cameras.rts.ignore(gui.instructionText)
     cameras.rts.ignore(gui.costText)
-    cameras.rtsGui.ignore(ghost)
     cameras.rtsGui.ignore(entities.enemies)
     cameras.rtsGui.ignore(entities.ground)
     cameras.rtsGui.ignore(entities.ground.state.container)

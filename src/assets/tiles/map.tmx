@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="140" height="11" tilewidth="32" tileheight="32" nextobjectid="23">
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="140" height="11" tilewidth="32" tileheight="32" nextobjectid="24">
  <tileset firstgid="1" name="tiles" tilewidth="32" tileheight="32" tilecount="5" columns="5">
   <image source="../images/tiles/tiles.png" width="160" height="32"/>
   <tile id="0">
@@ -94,5 +94,11 @@ Create a watchtower to shoot them off.</property>
   <object id="20" name="StatueAthena" x="991.177" y="200.658" width="6.54334" height="2.4653"/>
   <object id="21" name="StatueAthena" x="1612.02" y="112.225" width="6.54334" height="2.4653"/>
   <object id="22" name="StatueAthena" x="1863.86" y="133.211" width="6.54334" height="2.4653"/>
+  <object id="23" name="Zone" x="4218.75" y="93.3273" width="105.348" height="106.264">
+   <properties>
+    <property name="script" value="win"/>
+    <property name="text" value="You have brought earth to olympus!"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

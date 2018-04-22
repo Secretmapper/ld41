@@ -1,6 +1,7 @@
 import 'phaser'
 
 import PreloaderScene from './scenes/PreloaderScene'
+import SplashScene from './scenes/SplashScene'
 import MenuScene from './scenes/MenuScene'
 import GameScene from './scenes/GameScene'
 
@@ -19,6 +20,7 @@ const config = {
     },
     scene: [
         PreloaderScene,
+        SplashScene,
         MenuScene,
         GameScene
     ]

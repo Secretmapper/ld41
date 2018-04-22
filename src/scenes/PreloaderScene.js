@@ -27,7 +27,7 @@ class PreloaderScene extends Phaser.Scene {
   update () {
     if (this.fontsReady) {
       makeAnimations(this)
-      this.scene.start('MenuScene')
+      this.scene.start('SplashScene')
     }
   }
 
