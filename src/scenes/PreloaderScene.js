@@ -10,6 +10,8 @@ class PreloaderScene extends Phaser.Scene {
 
   preload () {
     this.load.atlas('entities', 'assets/textures/entities.png', 'assets/textures/entities.json')
+
+    this.load.tilemapTiledJSON('map', 'assets/tiles/map.json')
     this.load.image('tiles', 'assets/textures/tiles.png')
 
     WebFont.load({

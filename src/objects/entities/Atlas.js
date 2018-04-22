@@ -8,30 +8,47 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
     this.anims.play('atlas/idle')
 
     const KeyCodes = Phaser.Input.Keyboard.KeyCodes
+    this.body.setSize(80, 130)
     this.controls = this.scene.input.keyboard.addKeys({
       up: KeyCodes.W,
       down: KeyCodes.S,
       left: KeyCodes.A,
-      right: KeyCodes.D
+      right: KeyCodes.D,
+      jump: KeyCodes.SPACE
     })
   }
 
   update () {
     super.update(...arguments)
 
-    this.body.setVelocity(0)
+    this.body.setVelocityX(0)
     if (this.controls.left.isDown) {
-      this.body.setVelocity(-VEL, 0)
+      this.body.setVelocityX(-VEL)
       this.flipX = true
       this.anims.play('atlas/walk', true)
     } else if (this.controls.right.isDown) {
-      this.body.setVelocity(VEL, 0)
+      this.body.setVelocityX(VEL)
       this.flipX = false
       this.anims.play('atlas/walk', true)
     } else {
       this.anims.play('atlas/idle', true)
     }
 
+    // if (Phaser.Input.Keyboard.JustDown(this.controls.jump)) {
+    if (this.controls.jump.isDown) {
+      this.jump()
+    }
+
     this.scene.state.entities.ground.x = this.x
+  }
+
+  jump () {
+    if (!this.body.blocked.down && !this.jumping) {
+      return;
+    }
+
+    if (this.body.velocity.y < 0 || this.body.blocked.down) {
+      this.body.setVelocityY(-200)
+    }
   }
 }
