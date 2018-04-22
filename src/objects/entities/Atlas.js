@@ -35,6 +35,7 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
     this.targetter.y = this.y - this.targetter.height / 2
 
     this.body.setVelocityX(this.body.velocity.x * 0.95)
+
     if (this.controls.left.isDown) {
       this.body.setVelocityX(-VEL)
       this.flipX = true
@@ -53,6 +54,7 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
     }
 
     this.scene.state.entities.ground.x = this.x
+    this.SHOT_TIMER_MAX = 180
   }
 
   jump () {
@@ -77,7 +79,7 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
     })
     if (watchtowers.length === 0) return
 
-    this.lastShotTimer = 180 / (watchtowers.length)
+    this.lastShotTimer = this.SHOT_TIMER_MAX / (watchtowers.length)
 
     const posX = ground.state.container.x + ld.sample(watchtowers).x
     const posY = ground.state.container.y + watchtowers[0].y

@@ -6,12 +6,26 @@ import Atlas from '../objects/entities/Atlas'
 import RTSGround from '../objects/entities/RTSGround'
 import Wood from '../objects/entities/Wood'
 import Chaser from '../objects/entities/Chaser'
+import Ghost from '../objects/entities/Ghost'
 
 import ld from 'lodash'
 import fp from 'lodash/fp'
 
 const style = { font: '12px press_start', fill: '#ffffff', stroke: 'black', strokeThickness: 6, align: 'center' }
 const rightStyle = { font: '12px press_start', fill: '#ffffff', stroke: 'black', strokeThickness: 6, align: 'left' }
+
+const styles = {
+  instruction: {
+    font: '24px press_start',
+    fill: '#ffffff',
+    stroke: 'black',
+    strokeThickness: 6,
+    align: 'left',
+    wordWrap: {
+      width: 800
+    }
+  }
+}
 
 const frameData = {
   'structures2.png': {
@@ -34,7 +48,7 @@ const frameData = {
   },
   'structures6.png': {
     detail: ['Temple', 'produces faith'],
-    cost: { gold: 800, food: 100 },
+    cost: { gold: 800, food: 800 },
     makes: { faith: 1 }
   },
   'structures7.png': {
@@ -48,7 +62,8 @@ const frameData = {
   },
   'structures9.png': {
     detail: ['Goldmine', 'produces lots of gold'],
-    cost: { gold: 100, food: 400 }
+    cost: { gold: 100, food: 400 },
+    makes: { gold: 50 }
   },
   'structures10.png': {
     detail: ['Catapult', 'shoots Boulders'],
@@ -81,6 +96,8 @@ class GUI {
     this._actions.visible = false
     this._buildings.setScale(0)
     this._actions.setScale(0)
+
+    this.messageText = this.scene.add.text(0, 0, [], styles.instruction)
 
     this.instructionText = this.scene.add.text(0, 0, ['House', 'provides gold'], rightStyle)
     this.instructionText.alpha = 0
@@ -120,7 +137,7 @@ class GUI {
     this.faithButton.setInteractive()
 
     let Is = [
-      8, 2, 3, 4, 5, 6, 7, 9, 10
+      8, 3, 2, 4, 5, 6, 7, 9, 10
     ]
     for (let Is_i = 0; Is_i < Is.length; Is_i++) {
       const i = Is[Is_i]
@@ -202,6 +219,8 @@ class GUI {
 
     const resources = this.scene.data.get('resources')
     ld.forEach(resources, this.updateResourceText)
+
+    entities.atlas.SHOT_TIMER_MAX = 60
   }
 
   _updateResourceText (resource, key) {
@@ -214,7 +233,8 @@ class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' })
     this.state = {}
     this.depths = {
-      bullets: 300000
+      bullets: 300000,
+      messages: 400000
     }
   }
 
@@ -246,9 +266,15 @@ class GameScene extends Phaser.Scene {
       gui: new GUI(this),
       entities: {
         ground: new RTSGround(this, 0, 0, 'entities', 'ground.png'),
-        atlas: new Atlas(this, 400, 196, 'entities', 'atlas1.png'),
+        atlas: new Atlas(this, 160, 360, 'entities', 'atlas1.png'),
         dynamic: this.physics.add.group({ runChildUpdate: true }),
-        enemies: this.enemies.group
+        statues: this.physics.add.group({ runChildUpdate: true }),
+        enemies: this.enemies.group,
+        zones: this.physics.add.group()
+      },
+      doneScripts: {
+        spawnGhosts: false,
+        spawnGhostsTimer: 0
       }
     }
 
@@ -260,8 +286,6 @@ class GameScene extends Phaser.Scene {
 
     cameras.main.setSize(800, 280)
     cameras.main.setPosition(0, 200)
-
-    const statue = this.add.sprite(800, 365, 'entities', 'statues1.png')
 
     const ghost = this.add.sprite(200, 200, 'entities', 'ghost1.png')
     ghost.anims.play('ghost/idle')
@@ -278,6 +302,9 @@ class GameScene extends Phaser.Scene {
     cameras.rtsGui.ignore(entities.ground)
     cameras.rtsGui.ignore(entities.ground.state.container)
     cameras.rtsGui.ignore(entities.atlas)
+
+    cameras.rts.ignore(gui.messageText)
+    cameras.rtsGui.ignore(gui.messageText)
 
     cameras.rts.setZoom(2)
 
@@ -310,11 +337,20 @@ class GameScene extends Phaser.Scene {
     })
     // cameras.main.startFollow(entities.atlas)
 
+    this.physics.add.collider(entities.enemies, entities.atlas, this.die)
+
     this.physics.add.collider(entities.atlas, this.map.tiles.bg)
     this.physics.add.collider(entities.atlas, entities.dynamic)
     this.physics.add.collider(entities.dynamic, this.map.tiles.bg)
     this.physics.add.collider(entities.dynamic, entities.dynamic)
     this.physics.add.collider(entities.enemies, this.map.tiles.bg)
+    this.physics.add.overlap(entities.enemies, entities.enemies, (a, b) => {
+      if (a.enemyOverlap && b.enemyOverlap) {
+        a.enemyOverlap.bind(a)(b)
+        b.enemyOverlap.bind(b)(a)
+      }
+    })
+    this.physics.add.collider(entities.statues, this.map.tiles.bg)
     // this.physics.add.collider(this.shooting.arrows, this.map.tiles.bg)
 
     this.physics.add.overlap(entities.atlas.targetter, entities.enemies, entities.atlas.onEnemyTargetterOverlap, null, entities.atlas)
@@ -339,6 +375,13 @@ class GameScene extends Phaser.Scene {
 
     const { gui, cameras, entities } = this.state
 
+    gui.messageText.x = 0
+    gui.messageText.visible = false
+    // gui.messageText.y = entities.atlas.y
+    // gui.messageText.setText(zone.message)
+
+    this.physics.overlap(entities.atlas, entities.zones, this.onZoneOverlap, null, this)
+
     gui.update()
     entities.atlas.update()
     entities.ground.update()
@@ -358,6 +401,7 @@ class GameScene extends Phaser.Scene {
   }
 
   canBuyBuilding (data) {
+    return true
     const { entities } = this.state
     const resources = this.data.get('resources')
     if (!data) {
@@ -457,6 +501,50 @@ class GameScene extends Phaser.Scene {
     }
 
     entities.ground.state.building.setFrame(obj.frame.name)
+  }
+
+  onZoneOverlap (atlas, zone) {
+    const { gui, entities, doneScripts } = this.state
+    if (zone.message) {
+      gui.messageText.visible = true
+      gui.messageText.setOrigin(0, 0)
+      gui.messageText.x = 0
+      gui.messageText.y = -80
+      gui.messageText.setScrollFactor(0, 0)
+      gui.messageText.depth = this.depths.messages
+      gui.messageText.setText(zone.message)
+    }
+    if (zone.script) {
+      if (zone.script === 'fastShot') {
+        entities.atlas.SHOT_TIMER_MAX = 60
+      }
+      if (zone.script === 'spawnGhosts') {
+        if (doneScripts.spawnGhostsTimer <= 0) {
+          const entity = this.enemies.spawn([
+            entities.atlas.x + Phaser.Math.RND.integerInRange(-50, 50),
+            entities.atlas.y - 800
+          ], Ghost)
+          if (entity) {
+            doneScripts.spawnGhosts = true
+            doneScripts.spawnGhostsTimer = Phaser.Math.RND.integerInRange(0, 100) + 200
+          }
+        } else {
+          doneScripts.spawnGhostsTimer--
+        }
+      }
+      if (zone.script === 'clearStores') {
+        this.data.set('resources', {
+          gold: 0,
+          food: 0,
+          wood: 0,
+          stone: 0,
+          prayer: 0
+        })
+      }
+    }
+  }
+
+  die () {
   }
 }
 

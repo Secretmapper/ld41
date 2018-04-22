@@ -34,6 +34,7 @@ class RTSGround extends Phaser.GameObjects.Sprite {
     // this.state.container.add(this.state.person)
 
     this.state.container.add(this.state.buildings[4].gui)
+    this.state.container.add(this.state.buildings[4].lifeGui)
     this.state.container.add(this.state.hoverPointer)
 
     // this.state.person.anims.play('person/walk')
@@ -61,6 +62,12 @@ class RTSGround extends Phaser.GameObjects.Sprite {
 
     this.state.container.x = entities.atlas.x
     this.state.container.y = entities.atlas.y - 96 + this.y
+
+    for (let i = 0; i < this.state.buildings.length; i++) {
+      if (this.state.buildings[i]) {
+        this.state.buildings[i].update()
+      }
+    }
   }
 
   spawnBuilding (x, data) {
@@ -80,6 +87,20 @@ class RTSGround extends Phaser.GameObjects.Sprite {
       this.state.buildings[index] = sp
       this.state.container.add(sp)
       this.state.container.add(sp.gui)
+      this.state.container.add(sp.lifeGui)
+      sp.lifeGui.y = sp.y - sp.height - (
+        index % 2 === 0 ? 8 : 0
+      )
+      sp.lifeGui.depth = 9999999
+    }
+  }
+
+  killBuilding (building) {
+    for (let i = 0; i < this.state.buildings.length; i++) {
+      if (building === this.state.buildings[i]) {
+        this.state.buildings[i] = null
+        building.destroy()
+      }
     }
   }
 }

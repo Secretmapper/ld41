@@ -13,6 +13,26 @@ export default class ResourceMaker extends Phaser.GameObjects.Sprite {
     })
 
     this.gui = this.scene.add.container(0, 0)
+    this.lifeGui = this.scene.add.container(0, 0)
+
+    if (!(
+      frame === 'structures4.png'
+      || frame === 'structures5.png'
+    )) {
+      this.lifeGui.visible = false
+    }
+
+    this.bar = this.scene.add.sprite(0, 0, 'entities', 'bar.png')
+    this.lifeBar = this.scene.add.sprite(0, 0, 'entities', 'bar_life.png')
+
+    this.bar.setScale(15, 1)
+    this.lifeBar.setScale(13, 1)
+
+    this.bar.setOrigin(0.5, 0.5)
+    this.lifeBar.setOrigin(0.5, 0.5)
+
+    this.lifeGui.add(this.bar)
+    this.lifeGui.add(this.lifeBar)
 
     const style = { font: '24px press_start', fill: '#ffffff', stroke: 'black', strokeThickness: 5, align: 'right' }
     const icon = this.scene.add.sprite(0, 0, 'entities', 'resources6.png')
@@ -27,10 +47,64 @@ export default class ResourceMaker extends Phaser.GameObjects.Sprite {
     this.makes = { gold: 10 }
     this.icon = icon
     this.text = text
+    this.life = 100
   }
 
   setGenerates (makes) {
     this.makes = makes
+  }
+
+  update () {
+    super.update(...arguments)
+    if (!this.active) return
+
+    this.lifeGui.depth = this.scene.depths.bullets + 0.0001
+
+    this.lifeGui.x = this.x
+
+    if (this.lifeGui.visible) {
+      const atlas = this.scene.state.entities.atlas
+      if (atlas) {
+        if (
+          Math.abs(atlas.body.velocity.x) >= 50
+          || Math.abs(atlas.body.velocity.y) >= 50  
+        ) {
+          this.life -= 0.25
+        }
+      }
+
+      this.lifeBar.setScale(
+        (this.life / 100) * 13,
+        1
+      )
+
+      if (this.life <= 0) {
+        this.kill()
+      }
+    }
+  }
+
+  kill () {
+    this.setActive(false)
+    this._tween = this.scene.tweens.add({
+      targets: this,
+      props: {
+        y: '-=10',
+        alpha: 0
+      },
+      duration: 500,
+      ease: 'Power1',
+      onComplete: this.killBuilding.bind(this)
+    })
+  }
+
+  killBuilding () {
+    this.gui.destroy()
+    this.lifeGui.destroy()
+    this.scene.tweens.killTweensOf(this)
+    this.scene.state.entities.ground.killBuilding(
+      this
+    )
   }
 
   onAddResource () {

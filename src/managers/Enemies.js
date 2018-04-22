@@ -1,4 +1,5 @@
 import Chaser from '../objects/entities/Chaser'
+import Ghost from '../objects/entities/Ghost'
 
 export default class EnemyManager {
   constructor (scene) {
@@ -22,6 +23,7 @@ export default class EnemyManager {
   initialize () {
     for (let i = 0; i < 10; i++) {
       this.addAndKill(new Chaser(this.scene, 0, 0))
+      this.addAndKill(new Ghost(this.scene, 0, 0))
     }
   }
 
