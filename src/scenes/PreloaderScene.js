@@ -1,4 +1,5 @@
 import WebFont from 'webfontloader'
+import makeAnimations from '../helpers/animations'
 
 class PreloaderScene extends Phaser.Scene {
   constructor () {
@@ -25,7 +26,8 @@ class PreloaderScene extends Phaser.Scene {
 
   update () {
     if (this.fontsReady) {
-      this.scene.start('GameScene')
+      makeAnimations(this)
+      this.scene.start('MenuScene')
     }
   }
 

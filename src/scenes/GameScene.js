@@ -1,4 +1,3 @@
-import makeAnimations from '../helpers/animations'
 import LevelMap from '../managers/LevelMap'
 import Enemies from '../managers/Enemies'
 import Shooting from '../managers/Shooting'
@@ -215,6 +214,8 @@ class GUI {
   }
 
   update () {
+    if (this.scene.state.DEAD) return
+
     const { cameras, entities } = this.scene.state
 
     const resources = this.scene.data.get('resources')
@@ -231,15 +232,14 @@ class GUI {
 class GameScene extends Phaser.Scene {
   constructor () {
     super({ key: 'GameScene' })
+  }
+
+  create () {
     this.state = {}
     this.depths = {
       bullets: 300000,
       messages: 400000
     }
-  }
-
-  create () {
-    makeAnimations(this)
 
     this.data.set('resources', {
       gold: 100,
@@ -258,6 +258,7 @@ class GameScene extends Phaser.Scene {
     new Enemies(this)
 
     this.state = {
+      DEAD: false,
       cameras: {
         main: this.cameras.main,
         rts: this.cameras.add(0, 0, 800, 200).setName('rts'),
@@ -337,7 +338,7 @@ class GameScene extends Phaser.Scene {
     })
     // cameras.main.startFollow(entities.atlas)
 
-    this.physics.add.collider(entities.enemies, entities.atlas, this.die)
+    this.physics.add.collider(entities.enemies, entities.atlas, this.die.bind(this), null, this)
 
     this.physics.add.collider(entities.atlas, this.map.tiles.bg)
     this.physics.add.collider(entities.atlas, entities.dynamic)
@@ -372,6 +373,8 @@ class GameScene extends Phaser.Scene {
 
   update (time, delta) {
     super.update(...arguments)
+
+    if (this.state.DEAD) return
 
     const { gui, cameras, entities } = this.state
 
@@ -545,6 +548,21 @@ class GameScene extends Phaser.Scene {
   }
 
   die () {
+    if (this.state.DEAD) return
+
+    this.state.DEAD = true
+    this.cameras.main.fade(1000, 0, 0, 0)
+    this.state.cameras.rts.fade(1000, 0, 0, 0)
+    this.state.cameras.rtsGui.fade(1000, 0, 0, 0)
+    this._choreoTimer = this.time.delayedCall(
+      1000,
+      () => {
+        this.scene.start('MenuScene')
+      }
+    )
+  }
+
+  transitionOut () {
   }
 }
 
