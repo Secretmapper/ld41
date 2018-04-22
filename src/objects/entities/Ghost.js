@@ -1,4 +1,4 @@
-const VEL = 100
+const VEL = 50
 
 export default class Ghost extends Phaser.GameObjects.Sprite {
   constructor () {
@@ -13,7 +13,7 @@ export default class Ghost extends Phaser.GameObjects.Sprite {
     this.neighbors = []
 
     this.vel = new Phaser.Math.Vector2()
-    this.body.maxVelocity.setTo(150, 150)
+    this.body.maxVelocity.setTo(50, 50)
   }
 
   update () {

@@ -20,6 +20,9 @@ export default class Map {
     bg.setScale(2)
     bg2.setScale(2)
 
+    bg.depth = 1
+    bg2.depth = 1
+
     bg.setCollisionByProperty({ collides: true })
     bg2.setCollisionByProperty({ collides: true })
 

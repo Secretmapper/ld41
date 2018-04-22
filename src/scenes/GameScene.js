@@ -1,3 +1,4 @@
+import Clouds from '../managers/Clouds'
 import LevelMap from '../managers/LevelMap'
 import Enemies from '../managers/Enemies'
 import Shooting from '../managers/Shooting'
@@ -149,6 +150,7 @@ class GUI {
           `structures${i}.png`
         )
       )
+      sprite.depth = 3000000
       sprite.setInteractive()
       this._buildings.add(sprite)
     }
@@ -256,6 +258,7 @@ class GameScene extends Phaser.Scene {
     new LevelMap(this)
     new Shooting(this)
     new Enemies(this)
+    this.clouds = new Clouds(this)
 
     this.state = {
       DEAD: false,
@@ -267,7 +270,7 @@ class GameScene extends Phaser.Scene {
       gui: new GUI(this),
       entities: {
         ground: new RTSGround(this, 0, 0, 'entities', 'ground.png'),
-        atlas: new Atlas(this, 160, 360, 'entities', 'atlas1.png'),
+        atlas: new Atlas(this, 180, 360, 'entities', 'atlas1.png'),
         dynamic: this.physics.add.group({ runChildUpdate: true }),
         statues: this.physics.add.group({ runChildUpdate: true }),
         enemies: this.enemies.group,
@@ -291,6 +294,10 @@ class GameScene extends Phaser.Scene {
     cameras.main.ignore(gui.container)
     cameras.main.ignore(gui.instructionText)
     cameras.main.ignore(gui.costText)
+    cameras.rtsGui.ignore(this.clouds.group)
+    cameras.rtsGui.ignore(this.map.tiles.bg)
+    cameras.rtsGui.ignore(this.map.tiles.bg2)
+    cameras.rts.ignore(this.clouds.group)
     cameras.rts.ignore(gui.container)
     cameras.rts.ignore(gui.instructionText)
     cameras.rts.ignore(gui.costText)
@@ -370,6 +377,7 @@ class GameScene extends Phaser.Scene {
     super.update(...arguments)
 
     if (this.state.DEAD) return
+    this.clouds.update()
 
     const { gui, cameras, entities } = this.state
 
