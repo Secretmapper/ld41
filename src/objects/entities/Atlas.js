@@ -48,18 +48,20 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
       this.anims.play('atlas/idle', true)
     }
 
-    // if (Phaser.Input.Keyboard.JustDown(this.controls.jump)) {
-    if (this.controls.jump.isDown) {
+    if (Phaser.Input.Keyboard.JustDown(this.controls.jump)) {
+    // if (this.controls.jump.isDown) {
       this.jump()
     }
 
     this.scene.state.entities.ground.x = this.x
     this.SHOT_TIMER_MAX = 180
+
+    this.blockedDown = false
   }
 
   jump () {
-    if (this.body.blocked.down || this.body.touching.down) {
-      if (this.body.velocity.y < 0 || this.body.blocked.down || this.body.touching.down) {
+    if (this.body.blocked.down || this.blockedDown) {
+      if (this.body.velocity.y < 0 || this.body.blocked.down || this.blockedDown) {
         this.body.setVelocityY(-250)
       }
     }
@@ -91,5 +93,11 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
       enemy.y
     )
     this.scene.shooting.dumbShot(posX, posY, angle)
+  }
+
+  onDynamicCollide (atlas, dynamic) {
+    if (atlas.body.bottom < dynamic.body.bottom) {
+      this.blockedDown = true
+    }
   }
 }

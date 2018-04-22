@@ -336,7 +336,7 @@ class GameScene extends Phaser.Scene {
     this.physics.add.collider(entities.enemies, entities.atlas, this.die.bind(this), null, this)
 
     this.physics.add.collider(entities.atlas, this.map.tiles.bg)
-    this.physics.add.collider(entities.atlas, entities.dynamic)
+    this.physics.add.collider(entities.atlas, entities.dynamic, entities.atlas.onDynamicCollide, null, entities.atlas)
     this.physics.add.collider(entities.dynamic, this.map.tiles.bg)
     this.physics.add.collider(entities.dynamic, entities.dynamic)
     this.physics.add.collider(entities.enemies, this.map.tiles.bg)
