@@ -82,7 +82,10 @@ const frameData = {
   'structures14.png': {
     detail: ['Create Steppable Wood Platform'],
     cost: { gold: 100, wood: 80 }
-  }
+  },
+  'structures15.png': {
+    detail: ['Destroy']
+  },
 }
 
 class GUI {
@@ -131,10 +134,21 @@ class GUI {
       )
     this.faithButton.isFaith = true
 
+    this.sellButton = 
+      this.scene.add.sprite(
+        760,
+        20,
+        'entities',
+        `structures15.png`
+      )
+    this.sellButton.isSell = true
+
     this.container.add(this.buildingsButton)
     this.container.add(this.faithButton)
+    this.container.add(this.sellButton)
     this.buildingsButton.setInteractive()
     this.faithButton.setInteractive()
+    this.sellButton.setInteractive()
 
     let Is = [
       8, 3, 2, 4, 5, 6, 7, 9, 10
@@ -197,6 +211,14 @@ class GUI {
 
     this._actions.visible = true
     this._actions.setScale(1, 1)
+  }
+
+  showSale () {
+    this._buildings.visible = false
+    this._buildings.setScale(0)
+
+    this._actions.visible = false
+    this._actions.setScale(0)
   }
 
   addResource (x, y, key) {
@@ -407,7 +429,6 @@ class GameScene extends Phaser.Scene {
   }
 
   canBuyBuilding (data) {
-    return true
     const { entities } = this.state
     const resources = this.data.get('resources')
     if (!data) {
@@ -474,7 +495,15 @@ class GameScene extends Phaser.Scene {
       const round = Math.round(coord / ROUND_VALUE) * ROUND_VALUE
       const index = Math.round((round - 100) / 25)
 
-      if (!entities.ground.state.buildings[index]) {
+      const buildings = entities.ground.state.buildings
+      if (entities.ground.state.building.frame.name === 'structures15.png') {
+        if (buildings[index]) {
+          entities.ground.killBuilding(buildings[index])
+        }
+        return;
+      }
+
+      if (!buildings[index]) {
         const data = frameData[entities.ground.state.building.frame.name]
         const resources = this.data.get('resources')
         ld.each(data.cost, (value, key) => {
@@ -493,6 +522,10 @@ class GameScene extends Phaser.Scene {
     }
     else if (obj.isBuildings) {
       return gui.showBuildings()
+    }
+    else if (obj.isSell) {
+      entities.ground.startSale()
+      gui.showSale()
     }
 
     switch(obj.frame.name) {

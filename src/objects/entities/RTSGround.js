@@ -73,6 +73,10 @@ class RTSGround extends Phaser.GameObjects.Sprite {
   spawnBuilding (x, data) {
     const index = Math.round((x - 100) / 25)
 
+    console.log(
+    this.state.building.frame.name
+      ,'structures15.png')
+
     if (!this.state.buildings[index]) {
       const sp = new ResourceMaker(
         this.scene,
@@ -95,11 +99,15 @@ class RTSGround extends Phaser.GameObjects.Sprite {
     }
   }
 
+  startSale () {
+    this.isSelling = true
+  }
+
   killBuilding (building) {
     for (let i = 0; i < this.state.buildings.length; i++) {
       if (building === this.state.buildings[i]) {
         this.state.buildings[i] = null
-        building.destroy()
+        building.kill()
       }
     }
   }

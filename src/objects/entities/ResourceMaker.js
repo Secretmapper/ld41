@@ -86,6 +86,8 @@ export default class ResourceMaker extends Phaser.GameObjects.Sprite {
 
   kill () {
     this.setActive(false)
+    this.killing = true
+
     this._tween = this.scene.tweens.add({
       targets: this,
       props: {
@@ -108,7 +110,8 @@ export default class ResourceMaker extends Phaser.GameObjects.Sprite {
   }
 
   onAddResource () {
-    if (!this.makes) return
+    if (!this.makes) return;
+    if (this.killing) return;
 
     this.gui.setAlpha(1)
     this.gui.x = this.x + ((this.gui.list[0].width + this.gui.list[1].width) / 8)
