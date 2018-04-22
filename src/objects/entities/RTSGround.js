@@ -63,7 +63,7 @@ class RTSGround extends Phaser.GameObjects.Sprite {
     this.state.container.y = entities.atlas.y - 96 + this.y
   }
 
-  spawnBuilding (x) {
+  spawnBuilding (x, data) {
     const index = Math.round((x - 100) / 25)
 
     if (!this.state.buildings[index]) {
@@ -74,6 +74,7 @@ class RTSGround extends Phaser.GameObjects.Sprite {
         'entities',
         this.state.building.frame.name
       )
+      sp.setGenerates(data.makes)
       sp.setOrigin(0.5, 1)
 
       this.state.buildings[index] = sp

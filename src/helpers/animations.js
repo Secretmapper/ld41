@@ -36,4 +36,11 @@ export default function makeAnimations (scene) {
       ['idle', 1, 4, { frameRate: 12, repeat: -1 }],
     ]
   )
+
+  createAnims(
+    'chaser',
+    [
+      ['walk', 1, 5, { frameRate: 12, repeat: -1 }],
+    ]
+  )
 }

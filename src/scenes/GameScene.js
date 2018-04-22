@@ -1,8 +1,11 @@
 import makeAnimations from '../helpers/animations'
 import LevelMap from '../managers/LevelMap'
+import Enemies from '../managers/Enemies'
+import Shooting from '../managers/Shooting'
 import Atlas from '../objects/entities/Atlas'
 import RTSGround from '../objects/entities/RTSGround'
 import Wood from '../objects/entities/Wood'
+import Chaser from '../objects/entities/Chaser'
 
 import ld from 'lodash'
 import fp from 'lodash/fp'
@@ -13,43 +16,47 @@ const rightStyle = { font: '12px press_start', fill: '#ffffff', stroke: 'black',
 const frameData = {
   'structures2.png': {
     detail: ['House', 'produces gold'],
-    cost: { gold: 30, food: 40 }
+    cost: { gold: 100, food: 400 },
+    makes: { gold: 10 }
   },
   'structures3.png': {
     detail: ['Woodcutter', 'produces wood'],
-    cost: { gold: 30, food: 40 }
+    cost: { gold: 100, food: 400 },
+    makes: { wood: 5 }
   },
   'structures4.png': {
-    detail: ['Watchtower', 'shoots arrows'],
-    cost: { gold: 30, food: 40 }
+    detail: ['Watchtower', 'shoots arrows against enemies'],
+    cost: { gold: 600, wood: 100 }
   },
   'structures5.png': {
     detail: ['Mage', 'shoots magic fireballs'],
-    cost: { gold: 30, food: 40 }
+    cost: { gold: 1000, wood: 500 }
   },
   'structures6.png': {
     detail: ['Temple', 'produces faith'],
-    cost: { gold: 30, food: 40 }
+    cost: { gold: 800, food: 100 },
+    makes: { faith: 1 }
   },
   'structures7.png': {
     detail: ['Windmill', 'increases Atlas\' speed'],
-    cost: { gold: 30, food: 40 }
+    cost: { gold: 100, food: 400 }
   },
   'structures8.png': {
     detail: ['Farm', 'provides food'],
-    cost: { gold: 30, food: 40 }
+    cost: { gold: 100 },
+    makes: { food: 10 }
   },
   'structures9.png': {
     detail: ['Goldmine', 'produces lots of gold'],
-    cost: { gold: 30, food: 40 }
+    cost: { gold: 100, food: 400 }
   },
   'structures10.png': {
     detail: ['Catapult', 'shoots Boulders'],
-    cost: { gold: 30, food: 40 }
+    cost: { gold: 100, food: 400 }
   },
   'structures11.png': {
     detail: ['townhall'],
-    cost: { gold: 30, food: 40 }
+    cost: { gold: 100, food: 400 }
   },
   'structures12.png': {
     detail: ['Buildings']
@@ -59,7 +66,7 @@ const frameData = {
   },
   'structures14.png': {
     detail: ['Create Steppable Wood Platform'],
-    cost: { gold: 30, food: 40 }
+    cost: { gold: 100, wood: 80 }
   }
 }
 
@@ -113,7 +120,7 @@ class GUI {
     this.faithButton.setInteractive()
 
     let Is = [
-      2, 3, 4, 5, 6, 7, 8, 9, 10
+      8, 2, 3, 4, 5, 6, 7, 9, 10
     ]
     for (let Is_i = 0; Is_i < Is.length; Is_i++) {
       const i = Is[Is_i]
@@ -206,13 +213,16 @@ class GameScene extends Phaser.Scene {
   constructor () {
     super({ key: 'GameScene' })
     this.state = {}
+    this.depths = {
+      bullets: 300000
+    }
   }
 
   create () {
     makeAnimations(this)
 
     this.data.set('resources', {
-      gold: 0,
+      gold: 100,
       food: 0,
       wood: 0,
       stone: 0,
@@ -224,6 +234,8 @@ class GameScene extends Phaser.Scene {
     })
 
     new LevelMap(this)
+    new Shooting(this)
+    new Enemies(this)
 
     this.state = {
       cameras: {
@@ -235,7 +247,8 @@ class GameScene extends Phaser.Scene {
       entities: {
         ground: new RTSGround(this, 0, 0, 'entities', 'ground.png'),
         atlas: new Atlas(this, 400, 196, 'entities', 'atlas1.png'),
-        dynamic: this.physics.add.group({ runChildUpdate: true })
+        dynamic: this.physics.add.group({ runChildUpdate: true }),
+        enemies: this.enemies.group
       }
     }
 
@@ -261,6 +274,7 @@ class GameScene extends Phaser.Scene {
     cameras.rts.ignore(gui.instructionText)
     cameras.rts.ignore(gui.costText)
     cameras.rtsGui.ignore(ghost)
+    cameras.rtsGui.ignore(entities.enemies)
     cameras.rtsGui.ignore(entities.ground)
     cameras.rtsGui.ignore(entities.ground.state.container)
     cameras.rtsGui.ignore(entities.atlas)
@@ -271,24 +285,7 @@ class GameScene extends Phaser.Scene {
     this.input.on('pointermove', this.onPointerMove, this)
     this.input.on('pointerup', this.onPointerUp, this)
 
-    this.input.on('gameobjectup', function (pointer, obj) {
-      if (obj.isFaith) {
-        return gui.showActions()
-      }
-      else if (obj.isBuildings) {
-        return gui.showBuildings()
-      }
-      switch(obj.frame.name) {
-        case 'structures14.png':
-          const wood = new Wood(this.scene, entities.atlas.x, entities.atlas.y - entities.atlas.height / 2)
-          entities.dynamic.add(wood)
-          this.scene.add.existing(wood)
-          wood.body.setVelocity(entities.atlas.flipX ? -100 : 100, 0)
-          return
-      }
-
-      entities.ground.state.building.setFrame(obj.frame.name)
-    })
+    this.input.on('gameobjectup', this.onGameObjectUp.bind(this), this)
     this.input.on('gameobjectover', function (pointer, obj) {
       obj.setTint(0x00ff00)
 
@@ -317,6 +314,24 @@ class GameScene extends Phaser.Scene {
     this.physics.add.collider(entities.atlas, entities.dynamic)
     this.physics.add.collider(entities.dynamic, this.map.tiles.bg)
     this.physics.add.collider(entities.dynamic, entities.dynamic)
+    this.physics.add.collider(entities.enemies, this.map.tiles.bg)
+    // this.physics.add.collider(this.shooting.arrows, this.map.tiles.bg)
+
+    this.physics.add.overlap(entities.atlas.targetter, entities.enemies, entities.atlas.onEnemyTargetterOverlap, null, entities.atlas)
+    this.physics.add.collider(
+      this.shooting.arrows,
+      entities.enemies,
+      (arrow, enemy) => {
+        if (arrow.active && enemy.active) {
+          arrow.kill()
+          enemy.setActive(false)
+          enemy.setVisible(false)
+          enemy.body.enable = false
+        }
+      }
+    )
+
+    this.map.initializeEntities()
   }
 
   update (time, delta) {
@@ -342,10 +357,13 @@ class GameScene extends Phaser.Scene {
     )
   }
 
-  canBuyBuilding () {
+  canBuyBuilding (data) {
     const { entities } = this.state
     const resources = this.data.get('resources')
-    const data = frameData[entities.ground.state.building.frame.name]
+    if (!data) {
+      data = frameData[entities.ground.state.building.frame.name]
+    }
+
     let canBuy = true
 
     ld.each(data.cost, (value, key) => {
@@ -404,14 +422,41 @@ class GameScene extends Phaser.Scene {
 
       const coord = (Phaser.Math.Clamp(pointer.x, 200, 600)) / 2
       const round = Math.round(coord / ROUND_VALUE) * ROUND_VALUE
+      const index = Math.round((round - 100) / 25)
 
-      const data = frameData[entities.ground.state.building.frame.name]
+      if (!entities.ground.state.buildings[index]) {
+        const data = frameData[entities.ground.state.building.frame.name]
         const resources = this.data.get('resources')
-      ld.each(data.cost, (value, key) => {
-        resources[key] -= value
-      })
-      entities.ground.spawnBuilding(round)
+        ld.each(data.cost, (value, key) => {
+          resources[key] -= value
+        })
+        entities.ground.spawnBuilding(round, data)
+      }
     }
+  }
+
+  onGameObjectUp (pointer, obj) {
+    const { entities, gui } = this.state
+
+    if (obj.isFaith) {
+      return gui.showActions()
+    }
+    else if (obj.isBuildings) {
+      return gui.showBuildings()
+    }
+
+    switch(obj.frame.name) {
+      case 'structures14.png':
+        if (this.canBuyBuilding(frameData[obj.frame.name])) {
+          const wood = new Wood(this, entities.atlas.x, entities.atlas.y - entities.atlas.height / 2)
+          entities.dynamic.add(wood)
+          this.add.existing(wood)
+          wood.body.setVelocity(entities.atlas.flipX ? -100 : 100, 0)
+        }
+        return
+    }
+
+    entities.ground.state.building.setFrame(obj.frame.name)
   }
 }
 
