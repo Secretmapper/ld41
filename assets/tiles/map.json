@@ -92,7 +92,7 @@
                  "name":"Zone",
                  "properties":
                     {
-                     "text":"BE CAREFUL! Zues' warriors will kill you on contact!\n\nCreate a watchtower to shoot them off."
+                     "text":"BE CAREFUL! Zeus' warriors will kill you on contact!\n\nCreate a watchtower to shoot them off."
                     },
                  "propertytypes":
                     {
@@ -247,7 +247,7 @@
                  "properties":
                     {
                      "script":"win",
-                     "text":"You have brought earth to safety!\n\nThanks for playing!"
+                     "text":"You have brought th town to safety!\n\nIt's short since I ran out of time, but I'm happy for my first compo!\n\nThanks for playing!"
                     },
                  "propertytypes":
                     {
@@ -257,9 +257,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":105.347954659528,
-                 "x":4218.74975657257,
-                 "y":93.3273298282686
+                 "width":105.348,
+                 "x":4218.75,
+                 "y":93.3273
                 }],
          "opacity":1,
          "type":"objectgroup",

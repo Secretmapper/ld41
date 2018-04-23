@@ -4,6 +4,13 @@ class RTSGround extends Phaser.GameObjects.Sprite {
   constructor () {
     super(...arguments)
 
+    this._audio = {
+      sfx: {
+        arrows: this.scene.sound.add('sfx_arrows')
+      }
+    }
+    this._audio.sfx.arrows.volume = 0.5
+
     this.state = {
       container: this.scene.add.container(0, 0),
       building: this.addSprite(0, 20, 'entities', 'structures2.png'),
@@ -73,11 +80,11 @@ class RTSGround extends Phaser.GameObjects.Sprite {
   spawnBuilding (x, data) {
     const index = Math.round((x - 100) / 25)
 
-    console.log(
-    this.state.building.frame.name
-      ,'structures15.png')
-
     if (!this.state.buildings[index]) {
+      if (this.state.building.frame.name === 'structures4.png') {
+        this._audio.sfx.arrows.play()
+      }
+
       const sp = new ResourceMaker(
         this.scene,
         x - 200,

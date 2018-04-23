@@ -6,6 +6,12 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
     super(...arguments)
     this.scene.physics.world.enable(this)
 
+    this._audio = {
+      sfx: {
+        jump: this.scene.sound.add('sfx_jump')
+      }
+    }
+
     this.anims.play('atlas/idle')
 
     const KeyCodes = Phaser.Input.Keyboard.KeyCodes
@@ -62,6 +68,7 @@ export default class Atlas extends Phaser.GameObjects.Sprite {
   jump () {
     if (this.body.blocked.down || this.blockedDown) {
       if (this.body.velocity.y < 0 || this.body.blocked.down || this.blockedDown) {
+        this._audio.sfx.jump.play()
         this.body.setVelocityY(-250)
       }
     }

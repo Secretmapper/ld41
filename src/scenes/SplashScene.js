@@ -11,6 +11,9 @@ class SplashScene extends Phaser.Scene {
       index: 0
     }
 
+    this.melody = this.sound.add('town', { loop: true })
+    this.melody.play()
+
     const KeyCodes = Phaser.Input.Keyboard.KeyCodes
     this.controls = this.input.keyboard.addKeys({
       continue: KeyCodes.SPACE
@@ -79,6 +82,7 @@ class SplashScene extends Phaser.Scene {
           ease: 'Power1'
         })
       } else {
+        this.melody.stop()
         this.scene.start('MenuScene')
       }
 

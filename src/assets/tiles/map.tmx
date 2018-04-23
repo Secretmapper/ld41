@@ -62,7 +62,7 @@ Click on the actions tab to show all the actions you can do.</property>
   </object>
   <object id="8" name="Zone" x="1567.27" y="-0.545122" width="95.3127" height="224.083">
    <properties>
-    <property name="text">BE CAREFUL! Zues' warriors will kill you on contact!
+    <property name="text">BE CAREFUL! Zeus' warriors will kill you on contact!
 
 Create a watchtower to shoot them off.</property>
    </properties>
@@ -97,7 +97,9 @@ Create a watchtower to shoot them off.</property>
   <object id="23" name="Zone" x="4218.75" y="93.3273" width="105.348" height="106.264">
    <properties>
     <property name="script" value="win"/>
-    <property name="text">You have brought earth to safety!
+    <property name="text">You have brought th town to safety!
+
+It's short since I ran out of time, but I'm happy for my first compo!
 
 Thanks for playing!</property>
    </properties>

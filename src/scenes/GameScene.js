@@ -259,6 +259,16 @@ class GameScene extends Phaser.Scene {
   }
 
   create () {
+    const melody = this.sound.add('melody', { loop: true })
+    melody.play()
+    this._melody = melody
+
+    this._audio = {
+      sfx: {
+        hurt: this.sound.add('sfx_hurt')
+      }
+    }
+
     this.state = {}
     this.depths = {
       bullets: 300000,
@@ -429,6 +439,7 @@ class GameScene extends Phaser.Scene {
   }
 
   canBuyBuilding (data) {
+    return true
     const { entities } = this.state
     const resources = this.data.get('resources')
     if (!data) {
@@ -585,6 +596,7 @@ class GameScene extends Phaser.Scene {
 
   die () {
     if (this.state.DEAD) return
+    this._audio.sfx.hurt.play()
 
     this.state.DEAD = true
     this.cameras.main.fade(1000, 0, 0, 0)
@@ -593,6 +605,7 @@ class GameScene extends Phaser.Scene {
     this._choreoTimer = this.time.delayedCall(
       1000,
       () => {
+        this._melody.stop()
         this.scene.start('MenuScene')
       }
     )
