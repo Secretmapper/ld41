@@ -97,7 +97,7 @@ Create a watchtower to shoot them off.</property>
   <object id="23" name="Zone" x="4218.75" y="93.3273" width="105.348" height="106.264">
    <properties>
     <property name="script" value="win"/>
-    <property name="text">You have brought th town to safety!
+    <property name="text">You have brought the town to safety!
 
 It's short since I ran out of time, but I'm happy for my first compo!
 

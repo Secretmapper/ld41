@@ -541,7 +541,12 @@ class GameScene extends Phaser.Scene {
 
     switch(obj.frame.name) {
       case 'structures14.png':
-        if (this.canBuyBuilding(frameData[obj.frame.name])) {
+        const data = frameData[obj.frame.name]
+        if (this.canBuyBuilding(data)) {
+          const resources = this.data.get('resources')
+          ld.each(data.cost, (value, key) => {
+            resources[key] -= value
+          })
           const wood = new Wood(this, entities.atlas.x, entities.atlas.y - entities.atlas.height / 2)
           entities.dynamic.add(wood)
           this.add.existing(wood)
@@ -576,7 +581,7 @@ class GameScene extends Phaser.Scene {
           ], Ghost)
           if (entity) {
             doneScripts.spawnGhosts = true
-            doneScripts.spawnGhostsTimer = Phaser.Math.RND.integerInRange(0, 100) + 200
+            doneScripts.spawnGhostsTimer = Phaser.Math.RND.integerInRange(0, 100) + 400
           }
         } else {
           doneScripts.spawnGhostsTimer--
