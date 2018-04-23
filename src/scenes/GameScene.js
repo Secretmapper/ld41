@@ -30,7 +30,7 @@ const styles = {
 const frameData = {
   'structures2.png': {
     detail: ['House', 'produces gold'],
-    cost: { gold: 100, food: 400 },
+    cost: { gold: 100, food: 800 },
     makes: { gold: 10 }
   },
   'structures3.png': {
@@ -151,7 +151,7 @@ class GUI {
     this.sellButton.setInteractive()
 
     let Is = [
-      8, 3, 2, 4, 5, 6, 7, 9, 10
+      8, 3, 2, 4, 5, 6, 7, 9
     ]
     for (let Is_i = 0; Is_i < Is.length; Is_i++) {
       const i = Is[Is_i]
@@ -439,7 +439,6 @@ class GameScene extends Phaser.Scene {
   }
 
   canBuyBuilding (data) {
-    return true
     const { entities } = this.state
     const resources = this.data.get('resources')
     if (!data) {
